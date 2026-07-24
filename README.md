@@ -4,7 +4,7 @@ A secure, full-stack Flask web application engineered to streamline fitness cent
 
 ---
 
-## 🎯 Recruiter & Technical Highlights
+## 🎯 Technical Highlights
 
 This project was built to demonstrate key software engineering competencies, architectural best practices, and clean code principles. Key skills showcased include:
 
