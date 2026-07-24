@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Member Insight: {{ member.first_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Member Insight</h2>
+        <a href="{{ url_for('index') }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Back to Dashboard</a>
+    </div>
+
+    <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+        <!-- Left Column: Photo & Basic Info -->
+        <div style="flex: 1; min-width: 250px; text-align: center; padding-right: 2rem; border-right: 1px solid var(--border-color);">
+            <div style="margin-bottom: 1.5rem;">
+                {% if member.photo_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + member.photo_filename) }}" alt="Member Photo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface-color); box-shadow: var(--shadow-md);">
+                {% else %}
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background-color: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 3rem; margin: 0 auto;">?</div>
+                {% endif %}
+            </div>
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.75rem;">{{ member.first_name }} {{ member.last_name }}</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">Member since {{ member.join_date.strftime('%b %d, %Y') }}</p>
+            
+            <div style="text-align: left; margin-top: 2rem;">
+                <p><strong>Email:</strong><br>
+                    {% if member.email %}
+                        <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+                    {% else %}
+                        <span style="color: var(--text-muted);">Not provided</span>
+                    {% endif %}
+                </p>
+                <p style="margin-top: 1rem;"><strong>Phone:</strong><br> {{ member.phone }}</p>
+                {% if member.weight %}
+                <p style="margin-top: 1rem;"><strong>Weight:</strong><br> {{ member.weight }} kg</p>
+                {% endif %}
+                {% if member.height %}
+                <p style="margin-top: 1rem;"><strong>Height:</strong><br> {{ member.height }} cm</p>
+                {% endif %}
+                {% if member.medical_condition %}
+                <p style="margin-top: 1rem;"><strong>Medical Conditions:</strong><br>
+                    <span style="color: #fbbf24;">{{ member.medical_condition }}</span>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Subscription & Payment Status -->
+        <div style="flex: 2; min-width: 300px;">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Subscription Details</h3>
+            
+            <div style="background-color: var(--bg-color); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                {% if member.subscription %}
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Current Plan</span>
+                        <strong style="font-size: 1.125rem;">{{ member.subscription.name }}</strong>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Total Price Paid</span>
+                        <strong>₹{{ "%.2f"|format(member.subscription.price) }}</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Duration</span>
+                        <strong>{{ member.subscription.duration_months }} Months</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                        <span style="color: var(--text-muted);">Started On</span>
+                        <strong>{{ member.subscription_start.strftime('%b %d, %Y') }}</strong>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Payment / Subscription Status</p>
+                                {% if status == 'Active' %}
+                                    <span style="display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(16, 185, 129, 0.2); color: var(--secondary-color); border-radius: 9999px; font-weight: 600; font-size: 0.875rem;">Active</span>
+                                {% else %}
+                                    <span style="display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); border-radius: 9999px; font-weight: 600; font-size: 0.875rem;">Expired</span>
+                                {% endif %}
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Expiration Date</p>
+                                <strong style="font-size: 1.125rem;">{{ expiration_date.strftime('%b %d, %Y') }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">This member does not have an active subscription plan.</p>
+                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); border-radius: 9999px; font-weight: 600; font-size: 0.875rem;">No Plan</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Routine & Goals Section -->
+    <div style="margin-top: 2.5rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+            🏋️ Fitness Goal & Weekly Workout Routine
+        </h3>
+        
+        <!-- Goal Card -->
+        <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Current Goal</span>
+                    <h4 style="margin: 0.25rem 0 0; font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">
+                        {% if member.fitness_goal %}
+                            🎯 {{ member.fitness_goal }}
+                        {% else %}
+                            <span style="color: var(--text-muted); font-weight: normal; font-style: italic;">No fitness goal set yet</span>
+                        {% endif %}
+                    </h4>
+                </div>
+                <div>
+                    <a href="{{ url_for('edit_workout', id=member.id) }}" class="btn" style="background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; font-size: 0.875rem;">Edit Goal / Routine</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Routine Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem;">
+            {% for day, exercise in [
+                ('Monday', member.workout_monday),
+                ('Tuesday', member.workout_tuesday),
+                ('Wednesday', member.workout_wednesday),
+                ('Thursday', member.workout_thursday),
+                ('Friday', member.workout_friday),
+                ('Saturday', member.workout_saturday),
+                ('Sunday', member.workout_sunday)
+            ] %}
+            <div style="background-color: var(--bg-color); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; min-height: 120px; transition: transform 0.2s ease, border-color 0.2s ease;">
+                <strong style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">{{ day }}</strong>
+                <p style="margin: 0; font-size: 0.95rem; font-weight: 500; color: {% if exercise %}var(--text-main){% else %}var(--text-muted){% endif %}; line-height: 1.4; word-break: break-word;">
+                    {% if exercise %}
+                        {{ exercise }}
+                    {% else %}
+                        💤 Rest Day
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <a href="{{ url_for('edit_member', id=member.id) }}" class="btn btn-primary" style="padding: 0.75rem 2.5rem; font-size: 1rem;">✏️ Edit Member Details</a>
+        {% if member.subscription %}
+        <a href="{{ url_for('subscription_overview', id=member.id) }}" class="btn btn-secondary" style="padding: 0.75rem 2.5rem; font-size: 1rem;">📋 Subscription Overview</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

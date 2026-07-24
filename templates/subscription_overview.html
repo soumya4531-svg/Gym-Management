@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Overview: {{ member.first_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Subscription Overview</h2>
+        <a href="{{ url_for('member_insight', id=member.id) }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Back to Insight</a>
+    </div>
+
+    <!-- Member Summary -->
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding: 1.25rem; background-color: var(--bg-color); border-radius: 10px; border: 1px solid var(--border-color);">
+        {% if member.photo_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + member.photo_filename) }}" alt="Photo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+            <div style="width: 50px; height: 50px; border-radius: 50%; background-color: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.25rem;">?</div>
+        {% endif %}
+        <div>
+            <h3 style="margin-bottom: 0.25rem; font-size: 1.25rem;">{{ member.first_name }} {{ member.last_name }}</h3>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                {{ member.subscription.name }} &middot; ₹{{ "%.2f"|format(monthly_fee) }}/month &middot; {{ member.subscription.duration_months }} Months Plan
+            </p>
+        </div>
+    </div>
+
+    <!-- Month-wise Payment Table -->
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Amount (₹)</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Payment Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in months %}
+                <tr>
+                    <td><strong>{{ entry.label }}</strong></td>
+                    <td>₹{{ "%.2f"|format(entry.amount) }}</td>
+                    <td>
+                        {% if entry.status == 'paid' %}
+                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(16, 185, 129, 0.2); color: var(--secondary-color); border-radius: 9999px; font-weight: 600; font-size: 0.8rem;">✓ Paid</span>
+                        {% else %}
+                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); border-radius: 9999px; font-weight: 600; font-size: 0.8rem;">✗ Due</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entry.source %}
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">{{ entry.source }}</span>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entry.paid_date %}
+                            <span style="color: var(--text-main); font-size: 0.85rem;">{{ entry.paid_date.strftime('%d %b %Y') }}</span>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entry.status == 'due' %}
+                            <form method="POST" action="{{ url_for('mark_paid', member_id=member.id, month=entry.month, year=entry.year) }}" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <input type="date" name="paid_date" value="{{ today.strftime('%Y-%m-%d') }}" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-main); width: 130px;" required>
+                                <button type="submit" class="btn btn-secondary" style="padding: 0.35rem 1rem; font-size: 0.8rem;" onclick="return confirm('Mark {{ entry.label }} as paid?')">Mark Paid</button>
+                            </form>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

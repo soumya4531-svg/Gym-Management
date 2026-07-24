@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ members|length }}</div>
+        <div class="stat-label">Active Members</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ subscriptions|length }}</div>
+        <div class="stat-label">Subscription Plans</div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Recent Members</h2>
+        <a href="{{ url_for('add_member') }}" class="btn btn-primary">+ Add Member</a>
+    </div>
+    
+    {% if members %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Plan</th>
+                    <th>Join Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>
+                        {% if member.photo_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + member.photo_filename) }}" alt="Photo" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.75rem;">N/A</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ member.first_name }} {{ member.last_name }}</td>
+                    <td>{{ member.email if member.email else '—' }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td>
+                        {% if member.subscription %}
+                            {{ member.subscription.name }}
+                        {% else %}
+                            <span style="color: var(--text-muted);">None</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ member.join_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="{{ url_for('member_insight', id=member.id) }}" class="btn" style="background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--primary-color); padding: 0.5rem 1rem; font-size: 0.875rem; margin-right: 0.5rem;">View Insight</a>
+                        <form method="POST" action="{{ url_for('delete_member', id=member.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to remove this member?');">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted);">No members found. Add your first member to get started!</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Subscription Plans</h2>
+        <a href="{{ url_for('add_subscription') }}" class="btn btn-secondary">+ Add Plan</a>
+    </div>
+    
+    {% if subscriptions %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Plan Name</th>
+                    <th>Duration (Months)</th>
+                    <th>Price (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in subscriptions %}
+                <tr>
+                    <td><strong>{{ sub.name }}</strong></td>
+                    <td>{{ sub.duration_months }} Months</td>
+                    <td>₹{{ "%.2f"|format(sub.price) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted);">No subscription plans found. Add one to assign to members.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Add Member{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Add New Member</h2>
+        <a href="{{ url_for('index') }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Back to Dashboard</a>
+    </div>
+
+    <form method="POST" action="{{ url_for('add_member') }}" enctype="multipart/form-data">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="first_name" class="form-label">First Name *</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name" class="form-label">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email" class="form-label">Email Address (Optional)</label>
+            <input type="email" id="email" name="email" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="phone" class="form-label">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="photo" class="form-label">Member Photo (Optional)</label>
+            <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="weight" class="form-label">Weight in kg (Optional)</label>
+                <input type="number" id="weight" name="weight" class="form-control" step="0.1" min="0" placeholder="e.g. 70.5">
+            </div>
+            
+            <div class="form-group">
+                <label for="height" class="form-label">Height in cm (Optional)</label>
+                <input type="number" id="height" name="height" class="form-control" step="0.1" min="0" placeholder="e.g. 175">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="medical_condition" class="form-label">Known Medical Conditions (Optional)</label>
+            <textarea id="medical_condition" name="medical_condition" class="form-control" rows="3" style="resize: vertical; background-color: var(--bg-color);" placeholder="e.g. Asthma, Knee injury, Diabetes..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="fitness_goal" class="form-label">Fitness Goal (Optional)</label>
+            <input type="text" id="fitness_goal" name="fitness_goal" class="form-control" placeholder="e.g. Weight Loss, Weight Gain, Muscle Building, Cardiorespiratory Fitness">
+        </div>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; font-size: 1.25rem;">Weekly Workout Schedule (Optional)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_monday" class="form-label">Monday</label>
+                <input type="text" id="workout_monday" name="workout_monday" class="form-control" placeholder="e.g. Chest & Triceps">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_tuesday" class="form-label">Tuesday</label>
+                <input type="text" id="workout_tuesday" name="workout_tuesday" class="form-control" placeholder="e.g. Back & Biceps">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_wednesday" class="form-label">Wednesday</label>
+                <input type="text" id="workout_wednesday" name="workout_wednesday" class="form-control" placeholder="e.g. Legs & Abs">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_thursday" class="form-label">Thursday</label>
+                <input type="text" id="workout_thursday" name="workout_thursday" class="form-control" placeholder="e.g. Shoulders & Arms">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_friday" class="form-label">Friday</label>
+                <input type="text" id="workout_friday" name="workout_friday" class="form-control" placeholder="e.g. Full Body Cardio">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_saturday" class="form-label">Saturday</label>
+                <input type="text" id="workout_saturday" name="workout_saturday" class="form-control" placeholder="e.g. Active Recovery / Yoga">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_sunday" class="form-label">Sunday</label>
+                <input type="text" id="workout_sunday" name="workout_sunday" class="form-control" placeholder="e.g. Rest Day">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.5rem;">
+            <label for="subscription_id" class="form-label">Subscription Plan</label>
+            <select id="subscription_id" name="subscription_id" class="form-control" style="background-color: var(--bg-color);">
+                <option value="">-- No Plan Selected --</option>
+                {% for sub in subscriptions %}
+                <option value="{{ sub.id }}">{{ sub.name }} - {{ sub.duration_months }} Months (₹{{ "%.2f"|format(sub.price) }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Register Member</button>
+    </form>
+</div>
+{% endblock %}

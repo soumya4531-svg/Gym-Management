@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Goals & Workout: {{ member.first_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Edit Goal & Workout</h2>
+        <a href="{{ url_for('member_insight', id=member.id) }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Back to Insight</a>
+    </div>
+
+    <form method="POST" action="{{ url_for('edit_workout', id=member.id) }}">
+        <div class="form-group">
+            <label for="fitness_goal" class="form-label">Fitness Goal (Optional)</label>
+            <input type="text" id="fitness_goal" name="fitness_goal" class="form-control" value="{{ member.fitness_goal or '' }}" placeholder="e.g. Weight Loss, Weight Gain, Muscle Building, Cardiorespiratory Fitness">
+        </div>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; font-size: 1.25rem;">Weekly Workout Schedule (Optional)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_monday" class="form-label">Monday</label>
+                <input type="text" id="workout_monday" name="workout_monday" class="form-control" value="{{ member.workout_monday or '' }}" placeholder="e.g. Chest & Triceps">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_tuesday" class="form-label">Tuesday</label>
+                <input type="text" id="workout_tuesday" name="workout_tuesday" class="form-control" value="{{ member.workout_tuesday or '' }}" placeholder="e.g. Back & Biceps">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_wednesday" class="form-label">Wednesday</label>
+                <input type="text" id="workout_wednesday" name="workout_wednesday" class="form-control" value="{{ member.workout_wednesday or '' }}" placeholder="e.g. Legs & Abs">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_thursday" class="form-label">Thursday</label>
+                <input type="text" id="workout_thursday" name="workout_thursday" class="form-control" value="{{ member.workout_thursday or '' }}" placeholder="e.g. Shoulders & Arms">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_friday" class="form-label">Friday</label>
+                <input type="text" id="workout_friday" name="workout_friday" class="form-control" value="{{ member.workout_friday or '' }}" placeholder="e.g. Full Body Cardio">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_saturday" class="form-label">Saturday</label>
+                <input type="text" id="workout_saturday" name="workout_saturday" class="form-control" value="{{ member.workout_saturday or '' }}" placeholder="e.g. Active Recovery / Yoga">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="workout_sunday" class="form-label">Sunday</label>
+                <input type="text" id="workout_sunday" name="workout_sunday" class="form-control" value="{{ member.workout_sunday or '' }}" placeholder="e.g. Rest Day">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Save Goal & Routine</button>
+    </form>
+</div>
+{% endblock %}

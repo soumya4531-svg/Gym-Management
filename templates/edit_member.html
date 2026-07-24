@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Member: {{ member.first_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Edit Member</h2>
+        <a href="{{ url_for('member_insight', id=member.id) }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Back to Insight</a>
+    </div>
+
+    <form method="POST" action="{{ url_for('edit_member', id=member.id) }}" enctype="multipart/form-data">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="first_name" class="form-label">First Name *</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" value="{{ member.first_name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name" class="form-label">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" value="{{ member.last_name }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email" class="form-label">Email Address (Optional)</label>
+            <input type="email" id="email" name="email" class="form-control" value="{{ member.email or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="phone" class="form-label">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" class="form-control" value="{{ member.phone }}" required>
+        </div>
+
+        <!-- Current Photo Preview -->
+        <div class="form-group">
+            <label class="form-label">Current Photo</label>
+            {% if member.photo_filename %}
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                    <img src="{{ url_for('static', filename='uploads/' + member.photo_filename) }}" alt="Current Photo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color);">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--danger-color); font-size: 0.875rem;">
+                        <input type="checkbox" name="remove_photo" value="1" style="accent-color: var(--danger-color);">
+                        Remove photo
+                    </label>
+                </div>
+            {% else %}
+                <p style="color: var(--text-muted); font-size: 0.875rem;">No photo uploaded</p>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="photo" class="form-label">{{ 'Replace Photo' if member.photo_filename else 'Upload Photo' }} (Optional)</label>
+            <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="weight" class="form-label">Weight in kg (Optional)</label>
+                <input type="number" id="weight" name="weight" class="form-control" step="0.1" min="0" value="{{ member.weight or '' }}" placeholder="e.g. 70.5">
+            </div>
+            
+            <div class="form-group">
+                <label for="height" class="form-label">Height in cm (Optional)</label>
+                <input type="number" id="height" name="height" class="form-control" step="0.1" min="0" value="{{ member.height or '' }}" placeholder="e.g. 175">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="medical_condition" class="form-label">Known Medical Conditions (Optional)</label>
+            <textarea id="medical_condition" name="medical_condition" class="form-control" rows="3" style="resize: vertical; background-color: var(--bg-color);" placeholder="e.g. Asthma, Knee injury, Diabetes...">{{ member.medical_condition or '' }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+            <label for="subscription_id" class="form-label">Subscription Plan</label>
+            <select id="subscription_id" name="subscription_id" class="form-control" style="background-color: var(--bg-color);">
+                <option value="">-- No Plan Selected --</option>
+                {% for sub in subscriptions %}
+                <option value="{{ sub.id }}" {% if member.subscription_id == sub.id %}selected{% endif %}>{{ sub.name }} - {{ sub.duration_months }} Months (₹{{ "%.2f"|format(sub.price) }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
