@@ -15,11 +15,19 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key')
 
-# Use SQLite database
+# Use SQLite database by default, or Postgres if DATABASE_URL is set in production
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static', 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'gym.db')
+
+db_url = os.environ.get('DATABASE_URL')
+if db_url:
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'gym.db')
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -391,15 +399,16 @@ def mark_paid(member_id, month, year):
     flash(f'Payment marked as paid for {date(year, month, 1).strftime("%B %Y")}!', 'success')
     return redirect(url_for('subscription_overview', id=member_id))
 
+with app.app_context():
+    db.create_all()
+    # Create a default admin if none exists
+    if not Admin.query.first():
+        admin = Admin(username='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        print("Default admin created: admin / admin123")
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        # Create a default admin if none exists
-        if not Admin.query.first():
-            admin = Admin(username='admin')
-            admin.set_password('admin123')
-            db.session.add(admin)
-            db.session.commit()
-            print("Default admin created: admin / admin123")
-            
     app.run(debug=True)
+
