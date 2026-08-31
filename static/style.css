@@ -63,11 +63,22 @@ a:hover {
 }
 
 .nav-brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
 }
+
+.nav-logo {
+    height: 44px;
+    width: auto;
+    border-radius: 6px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.nav-logo:hover {
+    transform: scale(1.03);
+}
+
 
 .nav-links {
     display: flex;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Gym Admin{% endblock %} - Gym Administration App</title>
+    <title>{% block title %}FitNode{% endblock %} - Gym Management System</title>
     <meta name="description" content="Administrative application for managing gym members and subscriptions.">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -11,7 +11,9 @@
     {% if session.get('admin_id') %}
     <nav class="navbar">
         <div class="nav-brand">
-            GYM ADMIN PLATFORM
+            <a href="{{ url_for('index') }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="{{ url_for('static', filename='images/fitnode_logo.jpg') }}" alt="FitNode Logo" class="nav-logo">
+            </a>
         </div>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">Dashboard</a>
@@ -21,6 +23,7 @@
         </div>
     </nav>
     {% endif %}
+
 
     <main class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
