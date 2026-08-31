@@ -11,10 +11,11 @@
     {% if session.get('admin_id') %}
     <nav class="navbar">
         <div class="nav-brand">
-            <a href="{{ url_for('index') }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img src="{{ url_for('static', filename='images/fitnode_logo.jpg') }}" alt="FitNode Logo" class="nav-logo">
+            <a href="{{ url_for('index') }}" class="nav-brand-link">
+                <img src="{{ url_for('static', filename='images/fitnode_logo.png') }}" alt="FitNode Logo" class="nav-logo">
             </a>
         </div>
+
         <div class="nav-links">
             <a href="{{ url_for('index') }}">Dashboard</a>
             <a href="{{ url_for('add_member') }}">Add Member</a>
